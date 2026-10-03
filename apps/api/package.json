@@ -1,0 +1,31 @@
+{
+  "name": "@greenscore/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GREENScore Hyderabad REST API (Express + MongoDB/Mongoose). Hackathon MVP.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/index.ts",
+    "build": "node scripts/build.mjs",
+    "start": "node --env-file-if-exists=../../.env dist/index.js",
+    "seed": "tsx --env-file-if-exists=../../.env src/scripts/seed.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint . --max-warnings=0"
+  },
+  "dependencies": {
+    "@greenscore/shared": "*",
+    "@greenscore/types": "*",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "mongoose": "^9.10.4",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15"
+  }
+}

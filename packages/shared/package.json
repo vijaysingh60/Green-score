@@ -1,0 +1,23 @@
+{
+  "name": "@greenscore/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Framework-agnostic runtime logic shared by web, API and ML: parameter registry, scoring config + engine, labels, demo data.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@greenscore/types": "*"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}

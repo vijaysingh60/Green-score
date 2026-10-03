@@ -1,0 +1,32 @@
+# dependencies
+node_modules/
+
+# builds
+.next/
+dist/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# env (never commit real credentials)
+.env
+.env.*
+!.env.example
+
+# local data (Mongo dev data, uploaded documents)
+.data/
+uploads/
+
+# python / ML
+.venv/
+__pycache__/
+*.pyc
+apps/ml/models/*
+!apps/ml/models/.gitkeep
+apps/ml/data/*
+!apps/ml/data/.gitkeep
+
+# misc
+coverage/
+.DS_Store
+*.log

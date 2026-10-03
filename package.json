@@ -1,0 +1,36 @@
+{
+  "name": "greenscore-hyderabad",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GREENScore Hyderabad: Measure. Verify. Improve.",
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w @greenscore/api",
+    "dev:web": "npm run dev -w @greenscore/web",
+    "dev:ml": "bash scripts/dev-ml.sh",
+    "ml:setup": "bash scripts/dev-ml.sh --setup-only",
+    "db:local": "bash scripts/db-local.sh",
+    "db:seed": "npm run seed -w @greenscore/api",
+    "build": "npm run build -w @greenscore/api && npm run build -w @greenscore/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check": "npm run typecheck && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "concurrently": "^10.0.5",
+    "eslint": "^9.39.0",
+    "globals": "^17.13.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.0"
+  }
+}

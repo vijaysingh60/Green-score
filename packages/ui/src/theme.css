@@ -1,0 +1,43 @@
+/*
+ * GREENScore design tokens (Tailwind CSS v4). Import once from the app's global stylesheet:
+ *   @import "tailwindcss";
+ *   @import "@greenscore/ui/theme.css";
+ *   @source "../../../../packages/ui/src";
+ *
+ * Light, airy surfaces; greens for sustainability, blues for water / projection / AI;
+ * slate neutrals for text and borders.
+ */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-canvas: #f6faf7;
+  --color-ink: #0f2a1e;
+
+  --color-brand-50: #effaf3;
+  --color-brand-100: #d8f3e1;
+  --color-brand-200: #b3e6c6;
+  --color-brand-300: #82d2a2;
+  --color-brand-400: #4fb87c;
+  --color-brand-500: #2c9e61;
+  --color-brand-600: #1f7f4d;
+  --color-brand-700: #1b6540;
+  --color-brand-800: #195135;
+  --color-brand-900: #15422d;
+
+  --color-ocean-50: #eff8ff;
+  --color-ocean-100: #dbeefe;
+  --color-ocean-200: #bfe3fe;
+  --color-ocean-300: #93d2fd;
+  --color-ocean-400: #60b9fa;
+  --color-ocean-500: #3b9ef5;
+  --color-ocean-600: #2582ea;
+  --color-ocean-700: #1d69d7;
+  --color-ocean-800: #1e55ae;
+  --color-ocean-900: #1e4989;
+
+  --shadow-soft: 0 1px 2px rgb(15 42 30 / 0.04), 0 10px 28px -14px rgb(15 42 30 / 0.16);
+  --shadow-lift: 0 2px 4px rgb(15 42 30 / 0.05), 0 18px 40px -16px rgb(15 42 30 / 0.22);
+
+  --radius-card: 1.125rem;
+}
