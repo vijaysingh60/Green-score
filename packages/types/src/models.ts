@@ -66,6 +66,17 @@ export interface Building {
   updatedAt: string;
 }
 
+/** Short facts shown when hovering a map pin. Every field is optional data, never a score of its own. */
+export interface MapSummary {
+  /** Annual grid electricity use in kWh, if the owner provided it. */
+  electricityKwh: number | null;
+  solarInstalled: boolean | null;
+  /** Installed solar capacity in kWp. */
+  solarKwp: number | null;
+  /** Points per category (verified breakdown when available). */
+  breakdown: ScoreBreakdown | null;
+}
+
 /** Minimal shape for the Hyderabad map and list views. */
 export interface MapBuilding {
   id: string;
@@ -78,6 +89,8 @@ export interface MapBuilding {
   isDemo: boolean;
   /** Admin-verified total, or null. Demo buildings carry a *sample* value here, see `isDemo`. */
   finalVerifiedScore: number | null;
+  /** Hover summary; absent for buildings without an assessment. */
+  summary?: MapSummary | null;
 }
 
 /** Building profile. `owner` is only present for the owner and admins. */

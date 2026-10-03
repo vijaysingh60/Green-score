@@ -20,6 +20,7 @@ import {
   ASSESSMENT_SCHEMA_VERSION,
   SCORING_CONFIG,
   buildRecommendations,
+  buildMapSummary,
   calculatePreliminaryScore,
   computeNeighbourStats,
   estimateCarbon,
@@ -60,6 +61,13 @@ export async function listPublicBuildings(): Promise<MapBuilding[]> {
   const finalByBuilding = new Map(
     scores.map((s) => [String(s.buildingId), getVerifiedTotal(wire<Score>(s).finalVerifiedScore)]),
   );
+  const breakdownByBuilding = new Map(scores.map((s) => [String(s.buildingId), wire<Score>(s).finalVerifiedScore?.breakdown ?? null]));
+
+  // Latest assessment per building (highest version wins) for the hover summary.
+  const assessments = await BuildingAssessment.find({ buildingId: { $in: buildings.map((b) => b._id) } }).sort({ version: 1 });
+  const parametersByBuilding = new Map(
+    assessments.map((a) => [String(a.buildingId), wire<{ parameters: AssessmentParameters }>(a).parameters ?? null]),
+  );
 
   return buildings.map((b) => ({
     id: String(b._id),
@@ -71,6 +79,7 @@ export async function listPublicBuildings(): Promise<MapBuilding[]> {
     status: b.status,
     isDemo: b.isDemo,
     finalVerifiedScore: finalByBuilding.get(String(b._id)) ?? null,
+    summary: buildMapSummary(parametersByBuilding.get(String(b._id)), breakdownByBuilding.get(String(b._id))),
   }));
 }
 

@@ -9,6 +9,7 @@ import type {
   VerificationStatus,
 } from '@greenscore/types';
 import { CATEGORY_KEYS } from '@greenscore/types';
+import { buildMapSummary } from '../map-summary';
 import { PARAMETER_ENTRIES } from '../parameters';
 import { SCORING_CONFIG } from '../scoring/config';
 import { calculatePreliminaryScore, type ScoreCalculation } from '../scoring/engine';
@@ -233,7 +234,7 @@ export const demoBuildingId = (key: string): string => `demo-${key}`;
 export function getDemoMapBuildings(): MapBuilding[] {
   return buildDemoDataset()
     .filter((record) => record.building.status === 'VERIFIED')
-    .map(({ key, building, sampleFinal }) => ({
+    .map(({ key, building, sampleFinal, parameters }) => ({
       id: demoBuildingId(key),
       name: building.name,
       type: building.type as BuildingType,
@@ -243,5 +244,6 @@ export function getDemoMapBuildings(): MapBuilding[] {
       status: building.status,
       isDemo: true,
       finalVerifiedScore: sampleFinal?.totalScore ?? null,
+      summary: buildMapSummary(parameters, sampleFinal?.breakdown ?? null),
     }));
 }

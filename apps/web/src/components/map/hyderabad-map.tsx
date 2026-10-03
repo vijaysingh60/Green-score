@@ -4,10 +4,12 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Link from 'next/link';
 import { useEffect, useRef, type RefObject } from 'react';
-import { Circle, CircleMarker, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import { Circle, CircleMarker, MapContainer, Marker, Popup, TileLayer, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import type { MapBuilding } from '@greenscore/types';
 import {
   BUILDING_TYPE_LABELS,
+  CATEGORY_LABELS,
+  getCategoryMaxPoints,
   HYDERABAD_BOUNDS,
   HYDERABAD_CENTER,
   computeNeighbourStats,
@@ -168,6 +170,48 @@ function PopupNeighbours({ building, allBuildings }: { building: MapBuilding; al
         <p className="mt-1 text-[11px] text-slate-500">
           Rank {stats.rank} of {stats.count + 1} nearby{stats.includesDemo ? ' · includes sample scores' : ''}
         </p>
+      )}
+    </div>
+  );
+}
+
+/** Hover card: basic electricity facts plus points per category. */
+function HoverSummary({ building }: { building: MapBuilding }) {
+  const summary = building.summary;
+  if (!summary) return null;
+  const max = getCategoryMaxPoints();
+  const solar =
+    summary.solarInstalled === null
+      ? '–'
+      : summary.solarInstalled
+        ? `Yes${summary.solarKwp ? ` · ${Math.round(summary.solarKwp)} kWp` : ''}`
+        : 'No';
+  return (
+    <div className="w-56 p-3 text-xs">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Summary</p>
+      <dl className="mt-1.5 space-y-1">
+        <div className="flex justify-between gap-2">
+          <dt className="text-slate-500">Electricity</dt>
+          <dd className="font-medium tabular-nums text-ink">
+            {summary.electricityKwh !== null ? `${Math.round(summary.electricityKwh).toLocaleString('en-IN')} kWh/yr` : '–'}
+          </dd>
+        </div>
+        <div className="flex justify-between gap-2">
+          <dt className="text-slate-500">Solar PV</dt>
+          <dd className="font-medium text-ink">{solar}</dd>
+        </div>
+      </dl>
+      {summary.breakdown && (
+        <ul className="mt-2 space-y-1 border-t border-slate-100 pt-2">
+          {(Object.keys(max) as Array<keyof typeof max>).map((key) => (
+            <li key={key} className="flex justify-between gap-2">
+              <span className="truncate text-slate-500">{CATEGORY_LABELS[key]}</span>
+              <span className="tabular-nums text-ink">
+                {summary.breakdown![key]}/{max[key]}
+              </span>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
@@ -379,6 +423,11 @@ export default function HyderabadMap({
           zIndexOffset={(building.status !== 'VERIFIED' ? -500 : building.isDemo ? 0 : 1000) + Math.round((building.finalVerifiedScore ?? 0) * 10)}
           eventHandlers={{ click: () => onSelect(building.id, 'map') }}
         >
+          {building.status === 'VERIFIED' && building.summary && (
+            <Tooltip direction="right" offset={[16, 0]} opacity={1}>
+              <HoverSummary building={building} />
+            </Tooltip>
+          )}
           <Popup closeButton={false} minWidth={300}>
             <BuildingPopup building={building} allBuildings={allBuildings} />
           </Popup>

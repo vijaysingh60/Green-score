@@ -7,5 +7,6 @@ export * from './scoring/config';
 export * from './scoring/engine';
 export * from './improvements';
 export * from './carbon';
+export * from './map-summary';
 export * from './simulation';
 export * from './demo/demo-buildings';
