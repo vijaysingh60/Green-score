@@ -1,3 +1,4 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
 import type { HealthStatus } from '@greenscore/types';
 import { logger } from '../utils/logger';
@@ -28,11 +29,34 @@ function attachListeners(): void {
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Atlas `mongodb+srv://` URIs need a DNS SRV lookup. Some networks (hotel / campus / hackathon
+ * Wi-Fi, some routers) can't resolve SRV records and fail with `querySrv ECONNREFUSED`. For those
+ * we point Node's resolver at a public DNS server. Only applies to `+srv` URIs.
+ *
+ * Override with MONGODB_DNS_SERVERS (comma-separated, default "8.8.8.8"); set it empty to disable.
+ */
+function applyDnsOverride(uri: string): void {
+  if (!uri.startsWith('mongodb+srv://')) return;
+  const servers = (process.env.MONGODB_DNS_SERVERS ?? '8.8.8.8')
+    .split(',')
+    .map((server) => server.trim())
+    .filter(Boolean);
+  if (servers.length === 0) return;
+  try {
+    dns.setServers(servers);
+    logger.info(`Using DNS servers ${servers.join(', ')} to resolve the MongoDB SRV record`);
+  } catch (error) {
+    logger.warn(`Ignoring invalid MONGODB_DNS_SERVERS: ${error instanceof Error ? error.message : error}`);
+  }
+}
+
 export async function connectDatabase(
   uri: string,
   { retries = 3, retryDelayMs = 2000 }: ConnectOptions = {},
 ): Promise<void> {
   attachListeners();
+  applyDnsOverride(uri);
   mongoose.set('strictQuery', true);
 
   for (let attempt = 1; attempt <= retries; attempt += 1) {

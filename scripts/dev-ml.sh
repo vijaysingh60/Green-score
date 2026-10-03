@@ -24,4 +24,6 @@ fi
 [ "${1:-}" = "--setup-only" ] && { echo "ML environment ready."; exit 0; }
 
 cd "$ML_DIR"
-exec "$VENV/bin/python" -m uvicorn app.main:app --reload --port "$PORT"
+# Watch only app/. Without --reload-dir uvicorn watches the whole folder, including a .venv
+# inside it, and restarts endlessly as Python packages are touched.
+exec "$VENV/bin/python" -m uvicorn app.main:app --reload --reload-dir app --port "$PORT"
