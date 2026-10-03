@@ -4,6 +4,7 @@ import { buttonStyles } from '@greenscore/ui';
 import { CarbonCard } from './carbon-card';
 import { DetailsCard, DocumentsCard, ProfileHeader, ScoreCardsRow } from './profile-parts';
 import { MlVsHuman } from './ml-vs-human';
+import { NeighbourhoodCard } from './neighbourhood-card';
 import { RecommendationsCard } from './recommendations-card';
 import { ScoreBreakdown } from './score-breakdown';
 import { ScoreHistoryChart } from './score-history-chart';
@@ -57,6 +58,7 @@ export function BuildingProfileView({ profile, submitted }: { profile: BuildingP
         )}
         <div className="space-y-6">
           <CarbonCard carbon={profile.carbon} />
+          {profile.neighbours && <NeighbourhoodCard stats={profile.neighbours} />}
           {profile.feedback && <MlVsHuman feedback={profile.feedback} />}
         </div>
       </div>

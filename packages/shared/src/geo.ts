@@ -39,6 +39,32 @@ export const HYDERABAD_LOCALITIES: readonly HyderabadLocality[] = [
   { name: 'Shamshabad', pincode: '501218', latitude: 17.2403, longitude: 78.4294 },
 ];
 
+/** Great-circle distance between two points, in kilometres (haversine). */
+export function distanceKm(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const rad = (degrees: number) => (degrees * Math.PI) / 180;
+  const dLat = rad(bLat - aLat);
+  const dLng = rad(bLng - aLng);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(h));
+}
+
+/** The known locality closest to a point (used to autofill locality + a representative PIN). */
+export function nearestLocality(latitude: number, longitude: number): HyderabadLocality & { distanceKm: number } {
+  let best = HYDERABAD_LOCALITIES[0]!;
+  let bestDistance = Infinity;
+  for (const locality of HYDERABAD_LOCALITIES) {
+    const d = distanceKm(latitude, longitude, locality.latitude, locality.longitude);
+    if (d < bestDistance) {
+      best = locality;
+      bestDistance = d;
+    }
+  }
+  return { ...best, distanceKm: Math.round(bestDistance * 10) / 10 };
+}
+
+/** University of Hyderabad campus (from the OpenStreetMap campus boundary). */
+export const UOH_CAMPUS_BOUNDS = { south: 17.4326, west: 78.3079, north: 17.4734, east: 78.348 } as const;
+
 export function isWithinHyderabad(latitude: number, longitude: number): boolean {
   return (
     latitude >= HYDERABAD_BOUNDS.south &&

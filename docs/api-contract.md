@@ -29,7 +29,8 @@ Error codes: `VALIDATION_ERROR` (422), `BAD_REQUEST` (400), `UNAUTHENTICATED` (4
 ```
 
 Unknown parameter names are rejected (strict). Coordinates must be inside the Hyderabad region.
-`BuildingProfile` = `{ building, parameters, score, recommendations, carbon, history, feedback, documents }`.
+`BuildingProfile` = `{ building, parameters, score, recommendations, carbon, history, feedback, neighbours, documents }`.
+`neighbours` is the comparison with scored buildings within 500 m (average, rank, top nearby).
 `score` has all four slots; **only `score.finalVerifiedScore` with `verificationStatus: "VERIFIED"` is official.**
 
 ## Admin (header `x-admin-passcode: <ADMIN_PASSCODE>`; a demo gate, not real auth)

@@ -2,6 +2,7 @@ export * from './parameters';
 export * from './labels';
 export * from './geo';
 export * from './score-utils';
+export * from './neighbours';
 export * from './scoring/config';
 export * from './scoring/engine';
 export * from './improvements';

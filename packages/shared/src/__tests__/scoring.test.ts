@@ -305,3 +305,54 @@ describe('improvements, carbon and simulation helpers', () => {
     }
   });
 });
+
+import type { MapBuilding } from '@greenscore/types';
+import { computeNeighbourStats } from '../index';
+
+describe('neighbour score', () => {
+  // ~111 m per 0.001 degree of latitude.
+  const building = (id: string, dLat: number, score: number | null, isDemo = false): MapBuilding => ({
+    id,
+    name: `Building ${id}`,
+    type: 'OFFICE',
+    locality: 'Test',
+    latitude: 17.46 + dLat,
+    longitude: 78.33,
+    status: score === null ? 'DRAFT' : 'VERIFIED',
+    isDemo,
+    finalVerifiedScore: score,
+  });
+  const all = [
+    building('me', 0, 80),
+    building('a', 0.001, 90), //  ~111 m
+    building('b', 0.002, 70, true), //  ~222 m, sample score
+    building('c', 0.003, 60), //  ~333 m
+    building('unscored', 0.001, null), // no score: not a neighbour
+    building('far', 0.02, 99), // ~2.2 km: outside 500 m
+  ];
+
+  it('averages only scored buildings inside the radius, excluding the building itself', () => {
+    const stats = computeNeighbourStats(all[0]!, all);
+    expect(stats.count).toBe(3);
+    expect(stats.average).toBe(73.3); // (90 + 70 + 60) / 3
+    expect(stats.delta).toBe(6.7); // 80 - 73.3
+    expect(stats.rank).toBe(2); // only "a" (90) is higher
+    expect(stats.includesDemo).toBe(true);
+    expect(stats.top.map((n) => n.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('respects the radius', () => {
+    expect(computeNeighbourStats(all[0]!, all, 0.15).count).toBe(1); // only "a"
+    expect(computeNeighbourStats(all[0]!, all, 5).count).toBe(4); // now "far" too
+  });
+
+  it('handles a building with no score, and one with no neighbours', () => {
+    const unscored = computeNeighbourStats(all[4]!, all);
+    expect(unscored.average).not.toBeNull();
+    expect(unscored.delta).toBeNull();
+    expect(unscored.rank).toBeNull();
+
+    const lonely = computeNeighbourStats(all[5]!, all);
+    expect(lonely).toMatchObject({ count: 0, average: null, delta: null, rank: null, top: [] });
+  });
+});

@@ -206,6 +206,23 @@ export interface CarbonEstimate {
   note: string;
 }
 
+/** How a building compares with the scored buildings around it. */
+export interface NeighbourStats {
+  radiusKm: number;
+  /** Scored buildings inside the radius, not counting the building itself. */
+  count: number;
+  /** Mean score of those neighbours, or null when there are none. */
+  average: number | null;
+  /** This building's score minus the neighbour average. Null when either is missing. */
+  delta: number | null;
+  /** 1 = best. Position among this building plus its scored neighbours. Null if it has no score. */
+  rank: number | null;
+  /** True when any neighbour's score is sample (demo) data, so the UI can say so. */
+  includesDemo: boolean;
+  /** Up to three highest-scoring neighbours. */
+  top: Array<{ id: string; name: string; score: number; km: number; isDemo: boolean }>;
+}
+
 export interface ScoreHistoryPoint {
   date: string;
   score: number;

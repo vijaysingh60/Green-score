@@ -11,6 +11,7 @@ import type {
   BuildingDocument,
   FinalScore,
   MLFeedback,
+  NeighbourStats,
   Recommendation,
   Score,
   ScoreHistoryPoint,
@@ -84,6 +85,8 @@ export interface BuildingProfile {
   history: ScoreHistoryPoint[];
   /** ML prediction vs the human-verified score, once an admin has verified the building. */
   feedback: MLFeedback | null;
+  /** Comparison with scored buildings within 500 m. */
+  neighbours: NeighbourStats | null;
   documents: BuildingDocument[];
 }
 

@@ -21,6 +21,7 @@ import {
   SCORING_CONFIG,
   buildRecommendations,
   calculatePreliminaryScore,
+  computeNeighbourStats,
   estimateCarbon,
   getVerifiedTotal,
   scaleBreakdown,
@@ -108,6 +109,12 @@ export async function getProfile(idParam: string): Promise<BuildingProfile> {
 
   const context = { builtUpArea: building.builtUpArea, occupants: building.occupants };
 
+  // Neighbour score: compared against every scored building on the public map within 500 m.
+  const neighbours = computeNeighbourStats(
+    { id: building.id, latitude: building.latitude, longitude: building.longitude, finalVerifiedScore: verifiedTotal },
+    await listPublicBuildings(),
+  );
+
   return {
     building: detail,
     parameters,
@@ -116,6 +123,7 @@ export async function getProfile(idParam: string): Promise<BuildingProfile> {
     carbon: parameters ? estimateCarbon(parameters, context) : null,
     history: buildHistory(building, score, verifiedTotal),
     feedback: feedbackDoc ? wire<MLFeedback>(feedbackDoc) : null,
+    neighbours,
     documents: documentDocs.map((d) => wire<BuildingDocument>(d)),
   };
 }
